@@ -1,11 +1,37 @@
+require('dotenv').config()
 const express = require('express')
 const router = express.Router()
 const { User } = require('../models/users')
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
+const SECRET = process.env.ACCESS_TOKEN
+const jwtExpirySeconds = 300
 
-router.get('/login',(req,res)=>{
-    res.json({ message: 'Login' });
+router.post('/login',async(req,res)=>{
+    try {
+        let user = await User.findOne({ email: req.body.email })
+        if (!user) {
+            return res.status(400).json({ message: 'Incorrect email or password.' })
+        }
+        const correctPassword = await bcrypt.compare(req.body.password, user.password)
+        if (!correctPassword) {
+            return res.status(400).json({ message: 'Incorrect email or password.' })
+        }
+        const token = jwt.sign({ id: user._id }, SECRET)
+        res.cookie(
+            "token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+            sameSite: "strict",
+            maxAge: jwtExpirySeconds * 1000
+        })
+        res.json({ message: 'Successfully logged in' })
+
+    } catch (err) {
+        return res.status(400).json({ message: err.message })
+    }
+    // res.json({ message: 'Login' });
 });
 
 router.post('/register',async(req,res)=>{
