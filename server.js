@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // DB Config
 const db = require('./config/keys').MongoURI
-mongoose.connect(db,{ useNewUrlParser: true })
+mongoose.connect(db)
   .then(()=> console.log("MongoDB Connected..."))
   .catch(err => console.log(err))
 
