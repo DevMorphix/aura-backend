@@ -19,14 +19,14 @@ router.post('/login',async(req,res)=>{
             return res.status(400).json({ message: 'Incorrect email or password.' })
         }
         const token = jwt.sign({ id: user._id }, SECRET)
-        res.cookie(
-            "token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
-            sameSite: "strict",
-            maxAge: jwtExpirySeconds * 1000
-        })
-        res.json({ message: 'Successfully logged in' })
+        // res.cookie(
+        //     "token", token, {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV !== 'development',
+        //     sameSite: "strict",
+        //     maxAge: jwtExpirySeconds * 1000
+        // })
+        res.json({ Token: token })
 
     } catch (err) {
         return res.status(400).json({ message: err.message })
