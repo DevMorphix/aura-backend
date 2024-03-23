@@ -77,6 +77,24 @@ router.post('/login',async(req,res)=>{
     // res.json({ message: 'Login' });
 });
 
+router.post('/verify',async(req,res,next)=>{
+    try{
+        const { email,otp } = req.body;
+        let otpUser = await UserOtp.findOne({otp:otp})
+        if (otpUser){
+            console.log(otpUser.verified);
+            // return res.status(200).json({ Message: "Email send to the user" })
+            if(otpUser.verified && otpUser.email===email){
+                console.log("ahkfhasdkjfhaskdfhkjh");
+            }
+        }else{
+            return res.status(404).json({ message: "OTP not found or invalid OTP" })
+        }
+    }catch(err){    
+        return res.status(400).json({ message: err.message })
+    }
+})
+
 router.post('/register',async(req,res)=>{
     body_email = req.body.email
     let user = await User.findOne({ email: body_email })
