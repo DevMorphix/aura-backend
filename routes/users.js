@@ -7,13 +7,54 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const SECRET = process.env.ACCESS_TOKEN
 const jwtExpirySeconds = 300
-
+const {sendEmail} = require('../utils/sendEmail')
+const nodeMailer = require("nodemailer");
 
 router.post('/login',async(req,res)=>{
     try {
         let user = await User.findOne({ email: req.body.email })
         if (!user) {
             return res.status(400).json({ message: 'Incorrect email' })
+        }
+        else{
+            const randomNumber = Math.floor(Math.random() * 900000) + 100000;
+            console.log(`Random 6-digit number: ${randomNumber}`);
+            const email = req.body.email
+            const newOtp = new UserOtp({
+                otp:randomNumber,
+                user:email
+            });
+            await newOtp.save();
+            // Send OTP via email
+            
+            async function mailSend(options){
+                    const mailOptions = {
+                    from: process.env.SMPT_MAIL,
+                    to: email,
+                    subject: "You SheCare OTP ",
+                    html: `<p>${randomNumber}</p>`
+                };
+
+                const transporter = nodeMailer.createTransport({
+                    // host: process.env.SMPT_HOST,
+                    // port: process.env.SMPT_PORT,
+                    service: 'gmail',
+                    secure: true, // Use SSL
+                    auth: {
+                        user: process.env.SMPT_MAIL,
+                        pass: process.env.SMPT_APP_PASS,
+                    },
+
+                });
+                await transporter.sendMail(mailOptions);
+            }
+            mailSend()
+            // await sendEmail({
+            //     to: email,
+            //     subject: 'Your OTP',
+            //     message: `<p>Your OTP is: <strong>${randomNumber}</strong></p>`,
+            // });
+
         }
         // const correctPassword = await bcrypt.compare(req.body.password, user.password)
         // if (!correctPassword) {
@@ -28,6 +69,7 @@ router.post('/login',async(req,res)=>{
         //     maxAge: jwtExpirySeconds * 1000
         // })
         // res.json({ Token: token })
+        return res.status(200).json({ Message: "Email send to the user" })
 
     } catch (err) {
         return res.status(400).json({ message: err.message })
@@ -38,16 +80,10 @@ router.post('/login',async(req,res)=>{
 router.post('/register',async(req,res)=>{
     body_email = req.body.email
     let user = await User.findOne({ email: body_email })
-    // if (user) {
-    //     return res.status(400).send('User already exisits. Please sign in')
-    // } else {
+    if (user) {
+        return res.status(400).send('Email id already used')
+    } else if(req.body.checkbox === 'true'){
         try {
-            // function generateOTP() {
-            //     return randomstring.generate({
-            //         length: 6,
-            //         charset: 'numeric'
-            //     });
-            // }
             const email = req.body.email
             // const otp = generateOTP();
             // const newOtp = new UserOtp({
@@ -71,7 +107,7 @@ router.post('/register',async(req,res)=>{
             email:email,
         })
         await newUser.save()
-        res.status(200).json({ success: true, message: 'OTP sent successfully' });
+        res.status(200).json({ success: true, message: 'User registration done' });
             // const salt = await bcrypt.genSalt(10)
             // const password = await bcrypt.hash(req.body.password, salt)
             // const user = new User({
@@ -85,8 +121,10 @@ router.post('/register',async(req,res)=>{
         } catch (err) {
             return res.status(400).json({ message: err.message })
         }
+    }else{
+        return res.status(200).send('User data should must store in local storage')
     }
-// }
+}
     
 );
 module.exports = router;
