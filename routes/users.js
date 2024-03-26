@@ -69,7 +69,7 @@ router.post('/login',async(req,res)=>{
         //     maxAge: jwtExpirySeconds * 1000
         // })
         // res.json({ Token: token })
-        return res.status(200).json({ Message: "Email send to the user" })
+        return res.status(200).json({ message: "Email send to the user" })
 
     } catch (err) {
         return res.status(400).json({ message: err.message })
@@ -84,6 +84,8 @@ router.post('/verify',async(req,res,next)=>{
         if (otpUser){
             if(!otpUser.verified){
                 const token = jwt.sign({ email: otpUser.user }, process.env.ACCESS_TOKEN,{expiresIn: '20d'})
+                otpUser.verified = true
+                await otpUser.save(); 
                 return res.status(200).json({ Token: token });
             }
             else{
