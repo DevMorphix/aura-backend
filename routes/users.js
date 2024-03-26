@@ -4,10 +4,10 @@ const router = express.Router()
 const { User,UserOtp } = require('../models/users')
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 const SECRET = process.env.ACCESS_TOKEN
 const jwtExpirySeconds = 300
-const {sendEmail} = require('../utils/sendEmail')
+const {sendEmail} = require('../utils/sendEmail');
 const nodeMailer = require("nodemailer");
 
 router.post('/login',async(req,res)=>{
@@ -48,7 +48,7 @@ router.post('/login',async(req,res)=>{
                 });
                 await transporter.sendMail(mailOptions);
             }
-            mailSend()
+            mailSend();
             // await sendEmail({
             //     to: email,
             //     subject: 'Your OTP',
@@ -79,19 +79,21 @@ router.post('/login',async(req,res)=>{
 
 router.post('/verify',async(req,res,next)=>{
     try{
-        const { email,otp } = req.body;
+        const { otp } = req.body;
         let otpUser = await UserOtp.findOne({otp:otp})
         if (otpUser){
-            console.log(otpUser.verified);
-            // return res.status(200).json({ Message: "Email send to the user" })
-            if(otpUser.verified && otpUser.email===email){
-                console.log("ahkfhasdkjfhaskdfhkjh");
+            if(!otpUser.verified){
+                const token = jwt.sign({ email: otpUser.user }, process.env.ACCESS_TOKEN,{expiresIn: '20d'})
+                return res.status(200).json({ Token: token });
+            }
+            else{
+                return res.status(404).json({ message: "This otp already used" });
             }
         }else{
-            return res.status(404).json({ message: "OTP not found or invalid OTP" })
+            return res.status(404).json({ message: "OTP not found or invalid OTP" });
         }
     }catch(err){    
-        return res.status(400).json({ message: err.message })
+        return res.status(400).json({ message: err.message });
     }
 })
 
