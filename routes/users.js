@@ -39,7 +39,7 @@ router.post('/login',async(req,res)=>{
                     // host: process.env.SMPT_HOST,
                     // port: process.env.SMPT_PORT,
                     service: 'gmail',
-                    // secure: true, // Use SSL
+                    secure: true, // Use SSL
                     auth: {
                         user: process.env.SMPT_MAIL,
                         pass: process.env.SMPT_APP_PASS,
