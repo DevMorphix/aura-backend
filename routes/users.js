@@ -38,18 +38,21 @@ router.post('/login',async(req,res)=>{
     } catch (err) {
         return res.status(400).json({ message: err.message })
     }
-    // res.json({ message: 'Login' });
 });
 
 router.post('/verify',async(req,res,next)=>{
     try{
         const { otp } = req.body;
         let otpUser = await UserOtp.findOne({otp:otp})
+        let user = await Users.findOne({email:otpUser.user})
         if (otpUser){
             if(!otpUser.verified){
                 const token = jwt.sign({ email: otpUser.user }, process.env.ACCESS_TOKEN,{expiresIn: '20d'})
                 otpUser.verified = true
-                await otpUser.save(); 
+                await otpUser.save()
+                user.verified = true
+                await user.save()
+                await otpUser.deleteOne({ verified: true });
                 return res.status(200).json({ Token: token });
             }
             else{
