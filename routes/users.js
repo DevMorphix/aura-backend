@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const router = express.Router()
-const { Users,UserOtp } = require('../models/users')
+const { Users,UserOtp,UserDetails } = require('../models/users')
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -128,7 +128,21 @@ router.post('/userdetail',isAuthenticated,async(req,res)=>{
     try{
         const { conceive,duration_period,last_cycle_regular,last_cycle_irregular_start,last_cycle_irregular_last,last_period_start,email} = req.body;
         const current_user = req.user["email"]
-        return res.status(201).json({message:"User Created Successfully & Details added to database & Email send"})
+        const user = await UserDetails.find({email:current_user})
+        if(user){
+            return res.status(201).json({message:"User Already completed the form"})
+        }
+        const newDetails = new UserDetails({
+            conceive:conceive,
+            duration_period:duration_period,
+            last_cycle_regular:last_cycle_regular,
+            last_cycle_irregular_start:last_cycle_irregular_start,
+            last_cycle_irregular_last:last_cycle_irregular_last,
+            last_period_start:last_period_start,
+            email:current_user
+        })
+        await newDetails.save()
+        return res.status(200).json({message:"User Details Updated"})
 
     }catch (err) {
         return res.status(400).json({ message: err.message })
