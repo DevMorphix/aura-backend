@@ -5,10 +5,11 @@ const { Users,UserOtp } = require('../models/users')
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const SECRET = process.env.ACCESS_TOKEN
+const SECRET = process.env.SECRET_KEY
 const jwtExpirySeconds = 300
 const {sendEmail} = require('../utils/sendEmail');
 const nodeMailer = require("nodemailer");
+const isAuthenticated = require('../middlware/auth');
 
 router.post('/login',async(req,res)=>{
     try {
@@ -47,7 +48,7 @@ router.post('/verify',async(req,res,next)=>{
         let user = await Users.findOne({email:otpUser.user})
         if (otpUser){
             if(!otpUser.verified){
-                const token = jwt.sign({ email: otpUser.user }, process.env.ACCESS_TOKEN,{expiresIn: '20d'})
+                const token = jwt.sign({ email: otpUser.user }, process.env.SECRET_KEY,{expiresIn: '20d'})
                 otpUser.verified = true
                 await otpUser.save()
                 user.verified = true
@@ -122,4 +123,15 @@ router.post('/register',async(req,res)=>{
 }
     
 );
+
+router.post('/userdetail',isAuthenticated,async(req,res)=>{
+    try{
+        const { conceive,duration_period,last_cycle_regular,last_cycle_irregular_start,last_cycle_irregular_last,last_period_start,email} = req.body;
+        const current_user = req.user["email"]
+        return res.status(201).json({message:"User Created Successfully & Details added to database & Email send"})
+
+    }catch (err) {
+        return res.status(400).json({ message: err.message })
+    }
+});
 module.exports = router;

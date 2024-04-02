@@ -30,10 +30,6 @@ const UserDetailSchema = new Schema({
         type:String,
         required: true
     },
-    verified:{
-        type:Boolean,
-        default: false
-    },
     date:{  // Date of user registration  
         type:Date,
         default:Date.now 
