@@ -13,28 +13,26 @@ const isAuthenticated = require('../middlware/auth');
 
 router.post('/login',async(req,res)=>{
     try {
-        let user = await Users.findOne({ email: req.body.email })
+        const email = req.body.email
+        const password = req.body.password
+        let user = await Users.findOne({ email: email })
         if (!user) {
-            return res.status(400).json({ message: 'Incorrect email' })
+            return res.status(400).json({ message: "Incorrect email or Invalid user" })
         }
         else{
-            
-
+            if(user.verified==true){
+                const correctPassword = await bcrypt.compare(password, user.password)
+                if (!correctPassword) {
+                    return res.status(400).json({ message: "Incorrect email or password." })
+                }
+                const token = jwt.sign({ email: email }, process.env.SECRET_KEY,{expiresIn: '20d'}) 
+                const userdata = await UserDetails.findOne({email:user.email})
+                
+                return res.status(200).json({ UserData:userdata,Token: token })
+            }else{
+                return res.status(400).json({ message: "User not verified" })
+            }
         }
-        // const correctPassword = await bcrypt.compare(req.body.password, user.password)
-        // if (!correctPassword) {
-        //     return res.status(400).json({ message: 'Incorrect email or password.' })
-        // }
-        // const token = jwt.sign({ id: user._id }, SECRET)
-        // res.cookie(
-        //     "token", token, {
-        //     httpOnly: true,
-        //     secure: process.env.NODE_ENV !== 'development',
-        //     sameSite: "strict",
-        //     maxAge: jwtExpirySeconds * 1000
-        // })
-        // res.json({ Token: token })
-        return res.status(200).json({ message: "Email send to the user" })
 
     } catch (err) {
         return res.status(400).json({ message: err.message })
@@ -126,10 +124,11 @@ router.post('/register',async(req,res)=>{
 
 router.post('/userdetail',isAuthenticated,async(req,res)=>{
     try{
-        const { conceive,duration_period,last_cycle_regular,last_cycle_irregular_start,last_cycle_irregular_last,last_period_start,email} = req.body;
+        const { conceive,duration_period,last_cycle_regular,last_cycle_irregular_start,last_cycle_irregular_last,last_period_start } = req.body;
         const current_user = req.user["email"]
         const user = await UserDetails.find({email:current_user})
-        if(user){
+        // console.log(us);
+        if(user.length>0){
             return res.status(201).json({message:"User Already completed the form"})
         }
         const newDetails = new UserDetails({
