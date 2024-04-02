@@ -107,39 +107,54 @@ router.post('/register',async(req,res)=>{
     } else if(req.body.checkbox === 'true'){
         try {
             const email = req.body.email
-            // const otp = generateOTP();
-            // const newOtp = new UserOtp({
-            //     otp:otp,
-            //     user:email
-            // });
-            // await newOtp.save();
+            const user_password = req.body.password
+            const salt = await bcrypt.genSalt(10)
+            const password = await bcrypt.hash(user_password, salt)
+            const newUser = new User({
+                conceive:req.body.conceive,
+                duration_period:req.body.duration_period,
+                last_cycle_regular:req.body.last_cycle_regular,
+                last_cycle_irregular_start:req.body.last_cycle_irregular_start,
+                last_cycle_irregular_last:req.body.last_cycle_irregular_last,
+                last_period_start:req.body.last_period_start,
+                email:email,
+                name: req.body.name,
+                password: password
+            });
+            await newUser.save()
+            console.log("user done");
+            const randomNumber = Math.floor(Math.random() * 900000) + 100000;
+            console.log(`Random 6-digit number: ${randomNumber}`);
+            const newOtp = new UserOtp({
+                otp:randomNumber,
+                user:req.body.email
+            });
+            await newOtp.save();
             // Send OTP via email
-        // await sendEmail({
-        //     to: email,
-        //     subject: 'Your OTP',
-        //     message: `<p>Your OTP is: <strong>${otp}</strong></p>`,
-        // });
-        const newUser = new User({
-            conceive:req.body.conceive,
-            duration_period:req.body.duration_period,
-            last_cycle_regular:req.body.last_cycle_regular,
-            last_cycle_irregular_start:req.body.last_cycle_irregular_start,
-            last_cycle_irregular_last:req.body.last_cycle_irregular_last,
-            last_period_start:req.body.last_period_start,
-            email:email,
-        })
-        await newUser.save()
-        res.status(200).json({ success: true, message: 'User registration done' });
-            // const salt = await bcrypt.genSalt(10)
-            // const password = await bcrypt.hash(req.body.password, salt)
-            // const user = new User({
-            //     name: req.body.name,
-            //     email: req.body.email,
-            //     password: password
-            // })
-            // await user.save()
-            // return res.status(201).json({message:"User Created Successfully"})
+            
+            async function mailSend(options){
+                    const mailOptions = {
+                    from: process.env.SMPT_MAIL,
+                    to: email,
+                    subject: "You SheCare OTP ",
+                    html: `<p>${randomNumber}</p>`
+                };
 
+                const transporter = nodeMailer.createTransport({
+                    // host: process.env.SMPT_HOST,
+                    // port: process.env.SMPT_PORT,
+                    service: 'gmail',
+                    secure: true, // Use SSL
+                    auth: {
+                        user: process.env.SMPT_MAIL,
+                        pass: process.env.SMPT_APP_PASS,
+                    },
+
+                });
+                await transporter.sendMail(mailOptions);
+            }
+            mailSend();
+            return res.status(201).json({message:"User Created Successfully & Details added to database & Email send"})
         } catch (err) {
             return res.status(400).json({ message: err.message })
         }

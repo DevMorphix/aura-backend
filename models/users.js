@@ -8,7 +8,7 @@ const UserSchema = new Schema({
     },
     duration_period:{
         type:Number,
-        required:true,
+        // required:true
     },
     last_cycle_regular:{
         type:String,
@@ -29,6 +29,14 @@ const UserSchema = new Schema({
     email:{
         type:String,
         required: true
+    },
+    password:{
+        type:String,
+        // required: true
+    },
+    verified:{
+        type:Boolean,
+        default: false
     },
     date:{  // Date of user registration  
         type:Date,
