@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema({
+const UserDetailSchema = new Schema({
     conceive:{
         type:Boolean,
         default:false
     },
     duration_period:{
         type:Number,
-        // required:true
+        required:true
     },
     last_cycle_regular:{
         type:String,
@@ -29,10 +29,6 @@ const UserSchema = new Schema({
     email:{
         type:String,
         required: true
-    },
-    password:{
-        type:String,
-        // required: true
     },
     verified:{
         type:Boolean,
@@ -63,6 +59,22 @@ const UserOtpSchema = new Schema({
     },
 })
 
-const User = mongoose.model('User',UserSchema);
+const User = new Schema({
+    email:{
+        type:String,
+        required: true
+    },
+    verified:{
+        type:Boolean,
+        default: false
+    },
+    password:{
+        type:String,
+        required: true
+    },
+})
+
+const Users = mongoose.model('User',User);
+const UserDetails = mongoose.model('UserDetails',UserDetailSchema);
 const UserOtp = mongoose.model('UserOtp',UserOtpSchema);
-module.exports = { User, UserOtp };
+module.exports = { Users, UserOtp,UserDetails };

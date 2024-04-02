@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const router = express.Router()
-const { User,UserOtp } = require('../models/users')
+const { Users,UserOtp } = require('../models/users')
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -12,48 +12,12 @@ const nodeMailer = require("nodemailer");
 
 router.post('/login',async(req,res)=>{
     try {
-        let user = await User.findOne({ email: req.body.email })
+        let user = await Users.findOne({ email: req.body.email })
         if (!user) {
             return res.status(400).json({ message: 'Incorrect email' })
         }
         else{
-            const randomNumber = Math.floor(Math.random() * 900000) + 100000;
-            console.log(`Random 6-digit number: ${randomNumber}`);
-            const email = req.body.email
-            const newOtp = new UserOtp({
-                otp:randomNumber,
-                user:email
-            });
-            await newOtp.save();
-            // Send OTP via email
             
-            async function mailSend(options){
-                    const mailOptions = {
-                    from: process.env.SMPT_MAIL,
-                    to: email,
-                    subject: "You SheCare OTP ",
-                    html: `<p>${randomNumber}</p>`
-                };
-
-                const transporter = nodeMailer.createTransport({
-                    // host: process.env.SMPT_HOST,
-                    // port: process.env.SMPT_PORT,
-                    service: 'gmail',
-                    secure: true, // Use SSL
-                    auth: {
-                        user: process.env.SMPT_MAIL,
-                        pass: process.env.SMPT_APP_PASS,
-                    },
-
-                });
-                await transporter.sendMail(mailOptions);
-            }
-            mailSend();
-            // await sendEmail({
-            //     to: email,
-            //     subject: 'Your OTP',
-            //     message: `<p>Your OTP is: <strong>${randomNumber}</strong></p>`,
-            // });
 
         }
         // const correctPassword = await bcrypt.compare(req.body.password, user.password)
@@ -101,28 +65,21 @@ router.post('/verify',async(req,res,next)=>{
 
 router.post('/register',async(req,res)=>{
     body_email = req.body.email
-    let user = await User.findOne({ email: body_email })
+    let user = await Users.findOne({ email: body_email })
     if (user) {
         return res.status(400).send('Email id already used')
-    } else if(req.body.checkbox === 'true'){
+    } else{
         try {
-            const email = req.body.email
-            const user_password = req.body.password
+            email = req.body.email
+            user_password = req.body.password
             const salt = await bcrypt.genSalt(10)
             const password = await bcrypt.hash(user_password, salt)
-            const newUser = new User({
-                conceive:req.body.conceive,
-                duration_period:req.body.duration_period,
-                last_cycle_regular:req.body.last_cycle_regular,
-                last_cycle_irregular_start:req.body.last_cycle_irregular_start,
-                last_cycle_irregular_last:req.body.last_cycle_irregular_last,
-                last_period_start:req.body.last_period_start,
+            const newUser = new Users({
                 email:email,
-                name: req.body.name,
                 password: password
             });
             await newUser.save()
-            console.log("user done");
+            
             const randomNumber = Math.floor(Math.random() * 900000) + 100000;
             console.log(`Random 6-digit number: ${randomNumber}`);
             const newOtp = new UserOtp({
@@ -158,8 +115,6 @@ router.post('/register',async(req,res)=>{
         } catch (err) {
             return res.status(400).json({ message: err.message })
         }
-    }else{
-        return res.status(200).send('User data should must store in local storage')
     }
 }
     
