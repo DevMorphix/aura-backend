@@ -147,4 +147,41 @@ router.post('/userdetail',isAuthenticated,async(req,res)=>{
         return res.status(400).json({ message: err.message })
     }
 });
+
+router.post('/otpresend',async(req,res)=>{
+    try{
+        const email = req.body.email;
+        const otpVerify = await UserOtp.findOne({user:email});
+        if (otpVerify && otpVerify.verified==false){
+            async function mailSend(options){
+                const mailOptions = {
+                from: process.env.SMPT_MAIL,
+                to: email,
+                subject: "You SheCare OTP ",
+                html: `<p>${otpVerify.otp}</p>`
+            };
+
+            const transporter = nodeMailer.createTransport({
+                // host: process.env.SMPT_HOST,
+                // port: process.env.SMPT_PORT,
+                service: 'gmail',
+                secure: true, // Use SSL
+                auth: {
+                    user: process.env.SMPT_MAIL,
+                    pass: process.env.SMPT_APP_PASS,
+                },
+
+            });
+            await transporter.sendMail(mailOptions);
+        }
+        mailSend();
+            return res.status(200).json({message:"Otp Resented"});
+        }
+        else{
+            return res.status(404).json({ message: "Otp not found" })
+        }
+    }catch(err){
+        return res.status(400).json({ message: err.message })
+    }
+})
 module.exports = router;
