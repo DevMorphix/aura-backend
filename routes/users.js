@@ -69,7 +69,7 @@ router.post('/register',async(req,res)=>{
     body_email = req.body.email
     let user = await Users.findOne({ email: body_email })
     if (user) {
-        return res.status(400).send('Email id already used')
+        return res.status(400).json({message:'Email id already used'})
     } else{
         try {
             email = req.body.email
