@@ -114,7 +114,7 @@ router.post('/register', async (req, res) => {
                 await transporter.sendMail(mailOptions);
             }
             mailSend();
-            return res.status(201).json({ message: "User Created Successfully & Details added to database & Email send" })
+            return res.status(201).json({ message: "User Created Successfully  & Email send" })
         } catch (err) {
             return res.status(400).json({ message: err.message })
         }
@@ -226,7 +226,7 @@ router.post('/forgotPassword', async (req, res) => {
                 await transporter.sendMail(mailOptions);
             }
             mailSend();
-            return res.status(200).json({ message: "Check your email you will receive a email for reset the password" });
+            return res.status(200).json({ message: "Check your email you will receive a link for reset the password" });
 
         }
     } catch (err) {
