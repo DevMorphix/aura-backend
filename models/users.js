@@ -70,7 +70,28 @@ const User = new Schema({
     },
 })
 
+const resetPassword = new Schema({
+    token:{
+        type:String,
+        required:true
+    },
+    verified:{
+        type:Boolean,
+        default: false
+    },
+    user:{
+        type:String,
+        required: true
+    },
+    tokenExpiration:{
+        type:Date,
+        default:Date.now
+    }
+})
+
 const Users = mongoose.model('User',User);
 const UserDetails = mongoose.model('UserDetails',UserDetailSchema);
 const UserOtp = mongoose.model('UserOtp',UserOtpSchema);
-module.exports = { Users, UserOtp,UserDetails };
+const ResetPassword = mongoose.model('ResetPassword',resetPassword);
+
+module.exports = { Users, UserOtp,UserDetails,ResetPassword };

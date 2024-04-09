@@ -1,7 +1,8 @@
 require('dotenv').config()
 const express = require('express')
+const crypto = require('crypto');
 const router = express.Router()
-const { Users,UserOtp,UserDetails } = require('../models/users')
+const { Users,UserOtp,UserDetails,ResetPassword } = require('../models/users')
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -182,6 +183,54 @@ router.post('/otpresend',async(req,res)=>{
         }
     }catch(err){
         return res.status(400).json({ message: err.message })
+    }
+})
+
+router.post('/forgotPassword',async(req,res)=>{
+    const email = req.body.email;
+    let user = await Users.findOne({ email: email })
+    if (!user) {
+        return res.status(400).json({ message: "Email not found" })
+    }else{
+        // const resetToken = crypto.randomBytes(20).toString('hex');
+        // require('crypto').randomBytes(48, function(err, buffer) {
+        //     var resetToken = buffer.toString('hex');
+        //   });
+        var resetToken = crypto.randomBytes(64).toString('hex');
+        const tokenExpiration = Date.now() + 3600000;
+
+        const reset = new ResetPassword({
+            token:resetToken,
+            tokenExpiration:tokenExpiration,
+            user:user
+        });
+        await reset.save()
+
+
+        async function mailSend(options){
+            const mailOptions = {
+            from: process.env.SMPT_MAIL,
+            to: email,
+            subject: "You SheCare Password Reset Link ",
+            html: `<p>https://aura-backend-chi.vercel.app/reset-password/${resetToken}</p>`
+        };
+
+        const transporter = nodeMailer.createTransport({
+            // host: process.env.SMPT_HOST,
+            // port: process.env.SMPT_PORT,
+            service: 'gmail',
+            secure: true, // Use SSL
+            auth: {
+                user: process.env.SMPT_MAIL,
+                pass: process.env.SMPT_APP_PASS,
+            },
+
+        });
+        await transporter.sendMail(mailOptions);
+    }
+    mailSend();
+    return res.status(200).json({message:"Check your email you will receive a email for reset the password"});
+
     }
 })
 module.exports = router;
