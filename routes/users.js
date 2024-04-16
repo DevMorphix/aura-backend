@@ -222,12 +222,12 @@ router.post('/forgotPassword', async (req, res) => {
                         user: process.env.SMPT_MAIL,
                         pass: process.env.SMPT_APP_PASS,
                     },
-                    tls: {
-                        rejectUnauthorized: false
-                    },
-                    connectionTimeout: 30000, // 30 seconds
-                    greetingTimeout: 30000,   // 30 seconds
-                    socketTimeout: 30000      // 30 seconds
+                    // tls: {
+                    //     rejectUnauthorized: false
+                    // },
+                    // connectionTimeout: 30000, // 30 seconds
+                    // greetingTimeout: 30000,   // 30 seconds
+                    // socketTimeout: 30000      // 30 seconds
 
                 });
                 await transporter.sendMail(mailOptions);
