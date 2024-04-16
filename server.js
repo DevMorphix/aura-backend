@@ -23,7 +23,7 @@ const port = process.env.PORT || 3000;
 app.use('/',require('./routes/index'))
 app.use('/users',require('./routes/users'))
 app.get('/api/', (req, res) => {
-    res.json({ message: 'Hello, World!' });
+    res.json({ status:200,message: 'API Working Properly' });
 });
 
 app.listen(port, () => {
