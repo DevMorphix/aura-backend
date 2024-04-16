@@ -44,7 +44,13 @@ router.post('/verify', async (req, res, next) => {
     try {
         const { otp } = req.body;
         let otpUser = await UserOtp.findOne({ otp: otp })
+
+        if (!otpUser || !otpUser.user) {
+            return res.status(404).json({ message: "OTP not found or invalid OTP" });
+        }
+
         let user = await Users.findOne({ email: otpUser.user })
+        
         if (otpUser) {
             if (!otpUser.verified) {
                 const token = jwt.sign({ email: otpUser.user }, process.env.SECRET_KEY, { expiresIn: '20d' })
