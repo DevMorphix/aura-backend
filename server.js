@@ -20,13 +20,12 @@ mongoose.connect(db)
   .catch(err => console.log(err))
 
 const port = process.env.PORT || 3000;
-app.use('/',require('./routes/index'))
+app.use('/index',require('./routes/index'))
 app.use('/users',require('./routes/users'))
+
 app.get('/api/', (req, res) => {
     res.json({ status:200,message: 'API Working Properly' });
 });
-
-
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
