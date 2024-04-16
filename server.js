@@ -26,6 +26,8 @@ app.get('/api/', (req, res) => {
     res.json({ status:200,message: 'API Working Properly' });
 });
 
+
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
