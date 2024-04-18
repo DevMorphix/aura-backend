@@ -160,7 +160,8 @@ router.post('/userdetail', isAuthenticated, async (req, res) => {
             period_length_irregular_end:period_length_irregular_end
         })
         await newDetails.save()
-        return res.status(200).json({ message: "User Details Updated" })
+        const userdata = await UserDetails.findOne({ email: current_user }).select('-_id -__v')
+        return res.status(200).json({ userdata:userdata, message: "User Details Updated" })
 
     } catch (err) {
         return res.status(400).json({ message: err.message })
