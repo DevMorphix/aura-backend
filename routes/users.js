@@ -131,7 +131,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/userdetail', isAuthenticated, async (req, res) => {
     try {
-        const { conceive, duration_period, last_cycle_regular, last_cycle_irregular_start, last_cycle_irregular_last, last_period_start } = req.body;
+        const { conceive, duration_period, last_cycle_regular, last_cycle_irregular_start, last_cycle_irregular_last, last_period_start,period_length_regular,period_length_irregular_start,period_length_irregular_end} = req.body;
         const current_user = req.user["email"]
         const user = await UserDetails.find({ email: current_user })
         // console.log(us);
@@ -145,7 +145,11 @@ router.post('/userdetail', isAuthenticated, async (req, res) => {
             last_cycle_irregular_start: last_cycle_irregular_start,
             last_cycle_irregular_last: last_cycle_irregular_last,
             last_period_start: last_period_start,
-            email: current_user
+            email: current_user,
+            period_length_regular:period_length_regular,
+            period_length_irregular_start:period_length_irregular_start,
+            period_length_irregular_end:period_length_irregular_end
+
         })
         await newDetails.save()
         return res.status(200).json({ message: "User Details Updated" })
@@ -268,7 +272,7 @@ router.post('/reset-password/:token', async (req, res) => {
         user_password.password = hashedPassword;
         await user.save()
 
-        return res.status(200).json({ message: "Password Changed Successfully" });
+        return res.status(200).json({ message: "Password Changed Successfully"});
     } catch (err) {
         return res.status(400).json({ message: err.message })
     }

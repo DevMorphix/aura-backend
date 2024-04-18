@@ -30,6 +30,18 @@ const UserDetailSchema = new Schema({
         type:String,
         required: true
     },
+    period_length_regular:{
+        type: String,
+        required:false
+    },
+    period_length_irregular_start:{
+        type: String,
+        required:false
+    },
+    period_length_irregular_end:{
+        type: String,
+        required:false
+    },
     date:{  // Date of user registration  
         type:Date,
         default:Date.now 
