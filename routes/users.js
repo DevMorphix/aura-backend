@@ -215,7 +215,7 @@ router.post('/forgotPassword', async (req, res) => {
                     from: process.env.SMPT_MAIL,
                     to: email,
                     subject: "You SheCare Password Reset Link ",
-                    html: `<p>https://aura.badhusha.me/resetpassword/${resetToken}</p>`
+                    html: `<p>https://aura.badhusha.me/resetpassword?token=${resetToken}</p>`
                 };
 
                 const transporter = nodeMailer.createTransport({
