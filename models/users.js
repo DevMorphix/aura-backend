@@ -42,7 +42,11 @@ const UserDetailSchema = new Schema({
         type: String,
         required:false
     },
-    date:{  // Date of user registration  
+    createdAt:{  // Date of user registration  
+        type:Date,
+        default:Date.now 
+    },
+    updatedAt:{ 
         type:Date,
         default:Date.now 
     },

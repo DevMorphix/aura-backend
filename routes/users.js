@@ -149,7 +149,6 @@ router.post('/userdetail', isAuthenticated, async (req, res) => {
             period_length_regular:period_length_regular,
             period_length_irregular_start:period_length_irregular_start,
             period_length_irregular_end:period_length_irregular_end
-
         })
         await newDetails.save()
         return res.status(200).json({ message: "User Details Updated" })
