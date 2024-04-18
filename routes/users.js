@@ -42,11 +42,29 @@ router.post('/login', async (req, res) => {
 
 router.post('/verify', async (req, res, next) => {
     try {
-        const { otp } = req.body;
+        let { otp,email,password } = req.body;
         let otpUser = await UserOtp.findOne({ otp: otp })
 
-        if (!otpUser || !otpUser.user) {
+        if (!otpUser) {
             return res.status(404).json({ message: "OTP not found or invalid OTP" });
+        }
+        
+        if (otpUser.user !== email) {
+            return res.status(404).json({ message: "User email does not match OTP user" });
+        }
+
+        if (!otpUser && !otpUser.user === email) {
+            return res.status(404).json({ message: "OTP not found or invalid OTP" });
+        }else{
+            const user_email = email
+            const user_password = password
+            const salt = await bcrypt.genSalt(10)
+            const salted_password = await bcrypt.hash(user_password, salt)
+            const newUser = new Users({
+                email: user_email,
+                password: salted_password
+            });
+            await newUser.save()
         }
 
         let user = await Users.findOne({ email: otpUser.user })
@@ -59,7 +77,7 @@ router.post('/verify', async (req, res, next) => {
                 user.verified = true
                 await user.save()
                 await otpUser.deleteOne({ verified: true });
-                return res.status(200).json({ Token: token });
+                return res.status(200).json({ message:"User Created Successfully",Token: token });
             }
             else {
                 return res.status(404).json({ message: "This otp already used" });
@@ -79,21 +97,13 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ message: 'Email id already used' })
     } else {
         try {
-            email = req.body.email
-            user_password = req.body.password
-            const salt = await bcrypt.genSalt(10)
-            const password = await bcrypt.hash(user_password, salt)
-            const newUser = new Users({
-                email: email,
-                password: password
-            });
-            await newUser.save()
+            const email = req.body.email
 
             const randomNumber = Math.floor(Math.random() * 900000) + 100000;
             console.log(`Random 6-digit number: ${randomNumber}`);
             const newOtp = new UserOtp({
                 otp: randomNumber,
-                user: req.body.email
+                user: email
             });
             await newOtp.save();
             // Send OTP via email
