@@ -286,4 +286,19 @@ router.post('/reset-password/:token', async (req, res) => {
         return res.status(400).json({ message: err.message })
     }
 })
+
+router.post('/delete-account',isAuthenticated,async(req,res)=>{
+    try{
+        const email = req.body.email
+        const user = await Users.findOne({ email: email })
+        if (!user) {
+            return res.status(400).json({ message: "Incorrect email or Email id not found" })
+        }else{
+            await Users.deleteOne({ email: email });
+            return res.status(200).json({ message: "User Deleted Successfully"});
+        }
+    }catch(err){
+        return res.status(400).json({ message: err.message })
+    }
+})
 module.exports = router;

@@ -3,6 +3,9 @@ const { Users } = require('../models/users');
 
 const isAuthenticated = async (req, res, next) => {
     try {
+        if(!req.headers.authorization){
+            return next('JWT token not found');
+        }
         const token = req.headers.authorization.split(' ')[1];
         // console.log(token);
         if (!token) {
