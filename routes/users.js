@@ -277,10 +277,8 @@ router.post('/reset-password/:token', async (req, res) => {
         }
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(newPassword, salt);
-
         user_password.password = hashedPassword;
-        await user.save()
-
+        await user_password.save()
         return res.status(200).json({ message: "Password Changed Successfully"});
     } catch (err) {
         return res.status(400).json({ message: err.message })
@@ -294,8 +292,8 @@ router.post('/delete-account',isAuthenticated,async(req,res)=>{
         if (!user) {
             return res.status(400).json({ message: "Incorrect email or Email id not found" })
         }else{
-            await Users.deleteOne({ email: email });
             await UserDetails.deleteOne({email:email});
+            await Users.deleteOne({ email: email });
             return res.status(200).json({ message: "User Deleted Successfully"});
         }
     }catch(err){
