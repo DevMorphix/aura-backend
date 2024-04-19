@@ -295,6 +295,7 @@ router.post('/delete-account',isAuthenticated,async(req,res)=>{
             return res.status(400).json({ message: "Incorrect email or Email id not found" })
         }else{
             await Users.deleteOne({ email: email });
+            await UserDetails.deleteOne({email:email});
             return res.status(200).json({ message: "User Deleted Successfully"});
         }
     }catch(err){
