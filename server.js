@@ -22,6 +22,7 @@ mongoose.connect(db)
 const port = process.env.PORT || 3000;
 app.use('/index',require('./routes/index'))
 app.use('/users',require('./routes/users'))
+app.use('/notes',require('./routes/notes'))
 
 app.get('/api/', (req, res) => {
     res.json({ status:200,message: 'API Working Properly' });
