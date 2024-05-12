@@ -42,20 +42,20 @@ router.post('/login', async (req, res) => {
 
 router.post('/verify', async (req, res, next) => {
     try {
-        let { otp,email,password } = req.body;
+        let { otp, email, password } = req.body;
         let otpUser = await UserOtp.findOne({ otp: otp })
 
         if (!otpUser) {
             return res.status(404).json({ message: "OTP not found or invalid OTP" });
         }
-        
+
         if (otpUser.user !== email) {
             return res.status(404).json({ message: "User email does not match OTP user" });
         }
 
         if (!otpUser && !otpUser.user === email) {
             return res.status(404).json({ message: "OTP not found or invalid OTP" });
-        }else{
+        } else {
             const user_email = email
             const user_password = password
             const salt = await bcrypt.genSalt(10)
@@ -65,10 +65,15 @@ router.post('/verify', async (req, res, next) => {
                 password: salted_password
             });
             await newUser.save()
+
+            const newNote = new Notes({
+                user: email
+            })
+            await newNote.save()
         }
 
         let user = await Users.findOne({ email: otpUser.user })
-        
+
         if (otpUser) {
             if (!otpUser.verified) {
                 const token = jwt.sign({ email: otpUser.user }, process.env.SECRET_KEY, { expiresIn: '20d' })
@@ -77,7 +82,7 @@ router.post('/verify', async (req, res, next) => {
                 user.verified = true
                 await user.save()
                 await otpUser.deleteOne({ verified: true });
-                return res.status(200).json({ message:"User Created Successfully",Token: token });
+                return res.status(200).json({ message: "User Created Successfully", Token: token });
             }
             else {
                 return res.status(404).json({ message: "This otp already used" });
@@ -130,10 +135,6 @@ router.post('/register', async (req, res) => {
                 await transporter.sendMail(mailOptions);
             }
             mailSend();
-            const newNote =  new Notes({
-                user:email
-            })
-            await newNote.save()
             return res.status(201).json({ message: "User Created Successfully  & Email send" })
         } catch (err) {
             return res.status(400).json({ message: err.message })
@@ -145,7 +146,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/userdetail', isAuthenticated, async (req, res) => {
     try {
-        const { conceive, duration_period, last_cycle_regular, last_cycle_irregular_start, last_cycle_irregular_last, last_period_start,period_length_regular,period_length_irregular_start,period_length_irregular_end} = req.body;
+        const { conceive, duration_period, last_cycle_regular, last_cycle_irregular_start, last_cycle_irregular_last, last_period_start, period_length_regular, period_length_irregular_start, period_length_irregular_end } = req.body;
         const current_user = req.user["email"]
         const user = await UserDetails.find({ email: current_user })
         // console.log(us);
@@ -160,13 +161,13 @@ router.post('/userdetail', isAuthenticated, async (req, res) => {
             last_cycle_irregular_last: last_cycle_irregular_last,
             last_period_start: last_period_start,
             email: current_user,
-            period_length_regular:period_length_regular,
-            period_length_irregular_start:period_length_irregular_start,
-            period_length_irregular_end:period_length_irregular_end
+            period_length_regular: period_length_regular,
+            period_length_irregular_start: period_length_irregular_start,
+            period_length_irregular_end: period_length_irregular_end
         })
         await newDetails.save()
         const userdata = await UserDetails.findOne({ email: current_user }).select('-_id -__v')
-        return res.status(200).json({ userdata:userdata, message: "User Details Updated" })
+        return res.status(200).json({ userdata: userdata, message: "User Details Updated" })
 
     } catch (err) {
         return res.status(400).json({ message: err.message })
@@ -268,40 +269,40 @@ router.post('/forgotPassword', async (req, res) => {
 // For user token verification
 router.post('/reset-password/:token', async (req, res) => {
     try {
-        const token  = req.params['token'];
+        const token = req.params['token'];
         const newPassword = req.body.newPassword;
         const user = await ResetPassword.findOne({ token: token });
         const user_password = await Users.findOne({ email: user.user });
         if (!user) {
-            return res.status(401).json({message:'Invalid or expired token'});
+            return res.status(401).json({ message: 'Invalid or expired token' });
         }
 
         // Check if the token has expired
         if (Date.now() > user.tokenExpiration) {
-            return res.status(401).json({message:'Token expired'});
+            return res.status(401).json({ message: 'Token expired' });
         }
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(newPassword, salt);
         user_password.password = hashedPassword;
         await user_password.save()
-        return res.status(200).json({ message: "Password Changed Successfully"});
+        return res.status(200).json({ message: "Password Changed Successfully" });
     } catch (err) {
         return res.status(400).json({ message: err.message })
     }
 })
 
-router.post('/delete-account',isAuthenticated,async(req,res)=>{
-    try{
+router.post('/delete-account', isAuthenticated, async (req, res) => {
+    try {
         const email = req.body.email
         const user = await Users.findOne({ email: email })
         if (!user) {
             return res.status(400).json({ message: "Incorrect email or Email id not found" })
-        }else{
-            await UserDetails.deleteOne({email:email});
+        } else {
+            await UserDetails.deleteOne({ email: email });
             await Users.deleteOne({ email: email });
-            return res.status(200).json({ message: "User Deleted Successfully"});
+            return res.status(200).json({ message: "User Deleted Successfully" });
         }
-    }catch(err){
+    } catch (err) {
         return res.status(400).json({ message: err.message })
     }
 })
