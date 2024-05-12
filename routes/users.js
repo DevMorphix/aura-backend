@@ -67,7 +67,8 @@ router.post('/verify', async (req, res, next) => {
             await newUser.save()
 
             const newNote = new Notes({
-                user: email
+                user: email,
+                content: ""
             })
             await newNote.save()
         }
