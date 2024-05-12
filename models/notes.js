@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 const NotesSchema = new Schema({
     content:{
         type:String,
-        default:true
+        required:false
     },
     user:{
         type:String,
-        default:true
+        required:true
     }
 })
 

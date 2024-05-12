@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const isAuthenticated = require('../middlware/auth');
 
 
-router.post('/add', isAuthenticated, async (req, res) => {
+router.patch('/add', isAuthenticated, async (req, res) => {
     try {
         const content = req.body.content;
         const current_user = req.user["email"]

@@ -3,6 +3,7 @@ const express = require('express')
 const crypto = require('crypto');
 const router = express.Router()
 const { Users, UserOtp, UserDetails, ResetPassword } = require('../models/users')
+const { Notes } = require('../models/notes')
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -129,6 +130,10 @@ router.post('/register', async (req, res) => {
                 await transporter.sendMail(mailOptions);
             }
             mailSend();
+            const newNote =  new Notes({
+                user:email
+            })
+            await newNote.save()
             return res.status(201).json({ message: "User Created Successfully  & Email send" })
         } catch (err) {
             return res.status(400).json({ message: err.message })
