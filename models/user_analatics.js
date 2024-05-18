@@ -26,6 +26,37 @@ const PeriodsSchema = new Schema({
     }
 })
 
-const PeriodsDates = mongoose.model('PeriodsDates',PeriodsSchema);
+const PeriodsMonthlySchema = new Schema({
+    period_dates:{
+        type: String,
+        required: false,
+    },
+    period_month:{
+        type: String,
+        required: false,
+    },
+    period_year:{
+        type: String,
+        required: false,
+    },
+    user:{
+        type:String,
+        required:true
+    },
+    created_at: {
+        type: Date,
+        required: false,
+        default: Date.now
+    },
+    updated_at: {
+        type: Date,
+        required: false,
+        default: Date.now
+    }
+})
 
-module.exports = { PeriodsDates };
+const PeriodsDates = mongoose.model('PeriodsDates',PeriodsSchema);
+const PeriodsMonthly = mongoose.model('PeriodsMonthly',PeriodsMonthlySchema);
+
+
+module.exports = { PeriodsDates,PeriodsMonthly };
