@@ -8,8 +8,8 @@ const mongoose = require('mongoose');
 const isAuthenticated = require('../middlware/auth');
 const isUserValidate = require('../middlware/user');
 
-// isAuthenticated,isUserValidate,
-router.get('/userdata',  async (req, res) => {
+
+router.get('/userdata', isAuthenticated,isUserValidate, async (req, res) => {
     try {
         const total_verified_users = await Users.find({verified:true}).countDocuments({}); // count of verified users
         const total_normal_users = await UserDetails.find({doctor:false}).countDocuments({}); // count of normal users
