@@ -54,6 +54,11 @@ const UserDetailSchema = new Schema({
         type: String,
         required:false
     },
+    doctor:{
+        type:Boolean,
+        default: false,
+        required:false
+    },
     createdAt:{  // Date of user registration  
         type:Date,
         default:Date.now 
