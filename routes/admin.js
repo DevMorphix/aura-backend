@@ -11,11 +11,20 @@ const isUserValidate = require('../middlware/user');
 
 
 
-
-router.post('/permissionToggle', isAuthenticated,isAdmin,isUserValidate, async (req, res) => {
+// isAdmin middleware need to add after
+router.post('/permissionToggle', isAuthenticated,isUserValidate, async (req, res) => {
     try {
-        
-        return res.status(200).json({ message: "permission" });
+        const current_user = req.user["email"]
+        const user = await UserDetails.findOne({ email:current_user })
+        if (user.doctor){
+            user.doctor = false
+            await user.save()
+            return res.status(200).json({ message: "User Permission enabled doctor" });
+        }else{
+            user.doctor = true
+            await user.save()
+            return res.status(200).json({ message: "User Permission disabled doctor" });
+        }
     } catch (err) {
         console.log(err);
 
