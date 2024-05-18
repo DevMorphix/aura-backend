@@ -59,6 +59,11 @@ const UserDetailSchema = new Schema({
         default: false,
         required:false
     },
+    is_admin:{
+        type:Boolean,
+        default: false,
+        required:false
+    },
     createdAt:{  // Date of user registration  
         type:Date,
         default:Date.now 

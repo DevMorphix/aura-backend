@@ -28,7 +28,7 @@ router.post('/login', async (req, res) => {
                     return res.status(400).json({ message: "Incorrect email or password." })
                 }
                 const token = jwt.sign({ email: email }, process.env.SECRET_KEY, { expiresIn: '20d' })
-                const userdata = await UserDetails.findOne({ email: user.email }).select('-_id -__v')
+                const userdata = await UserDetails.findOne({ email: user.email }).select('-_id -__v -is_admin')
                 return res.status(200).json({ UserData: userdata, Token: token })
             } else {
                 return res.status(400).json({ message: "User not verified" })

@@ -24,6 +24,8 @@ app.use('/index',require('./routes/index'))
 app.use('/users',require('./routes/users'))
 app.use('/notes',require('./routes/notes'))
 app.use('/appoinment',require('./routes/appoinment'))
+app.use('/admin',require('./routes/admin.js'))
+
 
 
 app.get('/api/', (req, res) => {
