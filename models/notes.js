@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const NotesSchema = new Schema({
+    title:{
+        type:String,
+        required:false
+    },
     content:{
         type:String,
         required:false
@@ -9,6 +13,16 @@ const NotesSchema = new Schema({
     user:{
         type:String,
         required:true
+    },
+    created_at: {
+        type: Date,
+        required: false,
+        default: Date.now
+    },
+    updated_at: {
+        type: Date,
+        required: false,
+        default: Date.now
     }
 })
 

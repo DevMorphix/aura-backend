@@ -66,11 +66,11 @@ router.post('/verify', async (req, res, next) => {
             });
             await newUser.save()
 
-            const newNote = new Notes({
-                user: email,
-                content: ""
-            })
-            await newNote.save()
+            // const newNote = new Notes({
+            //     user: email,
+            //     content: ""
+            // })
+            // await newNote.save()
         }
 
         let user = await Users.findOne({ email: otpUser.user })
