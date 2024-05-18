@@ -50,5 +50,23 @@ router.get('/:id', isAuthenticated, async (req, res) => {
     }
 });
 
+router.patch('/:id', isAuthenticated, async (req, res) => {
+    try {
+        const user = req.user["email"];
+        const content = req.body.content;
+        const title = req.body.title;
+
+        const note = await Notes.findOne({note_id:req.params.id})
+        note.content = content
+        note.title = title
+        note.updated_at = Date.now()
+        await note.save()
+        return res.status(200).json({ message: "Note Updated"})
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ message: err.message })
+
+    }
+});
 
 module.exports = router;
