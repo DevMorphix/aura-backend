@@ -289,7 +289,7 @@ router.post('/personaldetails', isAuthenticated,async (req, res) => {
     try {
         const current_user = req.user["email"];
         const { full_name,dob,phone_number } = req.body;
-        const userdetails = UserDetails.findOne({email:current_user})
+        const userdetails = await UserDetails.findOne({email:current_user})
         if (userdetails){
             userdetails.full_name = full_name
             userdetails.dob = dob

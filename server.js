@@ -23,7 +23,7 @@ const port = process.env.PORT || 3000;
 app.use('/index',require('./routes/index'))
 app.use('/users',require('./routes/users'))
 app.use('/notes',require('./routes/notes'))
-// app.use('/appoinment',require('./routes/appoinment'))
+app.use('/appoinment',require('./routes/appoinment'))
 
 
 app.get('/api/', (req, res) => {
