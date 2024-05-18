@@ -28,7 +28,7 @@ const PeriodsSchema = new Schema({
 
 const PeriodsMonthlySchema = new Schema({
     period_dates:{
-        type: String,
+        type: Array,
         required: false,
     },
     period_month:{
