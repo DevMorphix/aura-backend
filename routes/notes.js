@@ -41,7 +41,8 @@ router.post('/add', isAuthenticated, async (req, res) => {
 
 router.get('/:id', isAuthenticated, async (req, res) => {
     try {
-        const note = await Notes.findOne({note_id:req.params.id}).select('-_id -__v')
+        const noteId = req.params.id;
+        const note = await Notes.findOne({note_id:noteId}).select('-_id -__v')
         return res.status(200).json({ Note: note})
     } catch (err) {
         console.log(err);
@@ -55,13 +56,32 @@ router.patch('/:id', isAuthenticated, async (req, res) => {
         const user = req.user["email"];
         const content = req.body.content;
         const title = req.body.title;
+        const noteId = req.params.id;
 
-        const note = await Notes.findOne({note_id:req.params.id})
+        const note = await Notes.findOne({note_id:noteId})
         note.content = content
         note.title = title
         note.updated_at = Date.now()
         await note.save()
         return res.status(200).json({ message: "Note Updated"})
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ message: err.message })
+
+    }
+});
+
+
+router.delete('/:id', isAuthenticated, async (req, res) => {
+    try {
+        const user = req.user["email"];
+        const noteId = req.params.id;
+        const note = await Notes.findOne({note_id:noteId})
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found or Note already deleted'});
+        }
+        await Notes.deleteOne({ note_id: noteId, user });
+        return res.status(200).json({ message: "Note Deleted"})
     } catch (err) {
         console.log(err);
         return res.status(400).json({ message: err.message })
