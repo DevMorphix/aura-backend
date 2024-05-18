@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const isAuthenticated = require('../middlware/auth');
 const { v4: uuidv4 } = require('uuid');
 
+// Get all Notes as per user filter
 
 router.get('/', isAuthenticated, async (req, res) => {
     try {
@@ -19,6 +20,7 @@ router.get('/', isAuthenticated, async (req, res) => {
     }
 });
 
+// Add Notes
 router.post('/add', isAuthenticated, async (req, res) => {
     try {
         const user = req.user["email"];
@@ -39,6 +41,7 @@ router.post('/add', isAuthenticated, async (req, res) => {
     }
 });
 
+// Get Notes by note_id
 router.get('/:id', isAuthenticated, async (req, res) => {
     try {
         const noteId = req.params.id;
@@ -51,6 +54,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
     }
 });
 
+// Update Note by note_id
 router.patch('/:id', isAuthenticated, async (req, res) => {
     try {
         const user = req.user["email"];
@@ -71,7 +75,7 @@ router.patch('/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-
+// Delete note by note_id
 router.delete('/:id', isAuthenticated, async (req, res) => {
     try {
         const user = req.user["email"];
