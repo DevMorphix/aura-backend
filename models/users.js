@@ -42,6 +42,18 @@ const UserDetailSchema = new Schema({
         type: String,
         required:false
     },
+    full_name:{
+        type: String,
+        required:false
+    },
+    dob:{
+        type: String,
+        required:false
+    },
+    phone_number:{
+        type: String,
+        required:false
+    },
     createdAt:{  // Date of user registration  
         type:Date,
         default:Date.now 

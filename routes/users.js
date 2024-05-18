@@ -136,9 +136,7 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ message: err.message })
         }
     }
-}
-
-);
+});
 
 router.post('/userdetail', isAuthenticated, async (req, res) => {
     try {
@@ -282,6 +280,25 @@ router.post('/reset-password/:token', async (req, res) => {
         user_password.password = hashedPassword;
         await user_password.save()
         return res.status(200).json({ message: "Password Changed Successfully" });
+    } catch (err) {
+        return res.status(400).json({ message: err.message })
+    }
+})
+
+router.post('/personaldetails', isAuthenticated,async (req, res) => {
+    try {
+        const current_user = req.user["email"];
+        const { full_name,dob,phone_number } = req.body;
+        const userdetails = UserDetails.findOne({email:current_user})
+        if (userdetails){
+            userdetails.full_name = full_name
+            userdetails.dob = dob
+            userdetails.phone_number = phone_number
+            await userdetails.save()
+            return res.status(200).json({ message: "Userdetails Updated Successfully" });
+        }else{
+            return res.status(404).json({ message: "UserDetails Not Found" });
+        }
     } catch (err) {
         return res.status(400).json({ message: err.message })
     }
