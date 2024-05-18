@@ -106,7 +106,7 @@ router.post('/register', async (req, res) => {
             const email = req.body.email
 
             const randomNumber = Math.floor(Math.random() * 900000) + 100000;
-            console.log(`Random 6-digit number: ${randomNumber}`);
+            // console.log(`Random 6-digit number: ${randomNumber}`);
             const newOtp = new UserOtp({
                 otp: randomNumber,
                 user: email
