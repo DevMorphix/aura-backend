@@ -26,5 +26,17 @@ router.post('/add', isAuthenticated, async (req, res) => {
     }
 });
 
+router.get('/:id', isAuthenticated, async (req, res) => {
+    try {
+        const note = await Notes.findOne({note_id:req.params.id}).select('-_id -__v')
+        console.log(note);
+        return res.status(200).json({ message: "Notes updated" })
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ message: err.message })
+
+    }
+});
+
 
 module.exports = router;
