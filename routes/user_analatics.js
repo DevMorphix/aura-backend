@@ -53,21 +53,20 @@ router.get('/getdata', isAuthenticated, isUserValidate, async (req, res) => {
             return res.status(200).json({ period_dates: periods })
         } else {
             // Define the two dates
-            async function formatDate(dateString) {
+            function formatDate(dateString) {
                 const [year, month, day] = dateString.split('-').map(Number);
                 return [year, month - 1, day];
             }
             const date1formated = formatDate(periodsupdated.periods_end);
             const date2formated = formatDate(periodsupdated.periods_start);
-            const date1 = await new Date(date1formated); // May 15, 2023
-            const date2 = await new Date(date2formated); // April 20, 2023
+            const date1 =  new Date(date1formated); // May 15, 2023
+            const date2 =  new Date(date2formated); // April 20, 2023
 
             // Calculate the difference in milliseconds
             const diffInMs = date1.getTime() - date2.getTime();
 
             // Convert the difference from milliseconds to days
             const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
             // Generate an array with dates from date2 to date1
             const datesArray = Array.from({ length: diffInDays }, (_, i) => {
                 const date = new Date(date2.getTime() + i * 24 * 60 * 60 * 1000);
