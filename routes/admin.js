@@ -19,11 +19,11 @@ router.post('/permissionToggle', isAuthenticated,isUserValidate, async (req, res
         if (user.doctor){
             user.doctor = false
             await user.save()
-            return res.status(200).json({ message: "User Permission enabled doctor" });
+            return res.status(200).json({ message: "User Permission disabled doctor" });
         }else{
             user.doctor = true
             await user.save()
-            return res.status(200).json({ message: "User Permission disabled doctor" });
+            return res.status(200).json({ message: "User Permission enabled doctor" });
         }
     } catch (err) {
         console.log(err);
