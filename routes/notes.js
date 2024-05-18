@@ -81,7 +81,7 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
             return res.status(404).json({ message: 'Note not found or Note already deleted'});
         }
         await Notes.deleteOne({ note_id: noteId, user });
-        return res.status(200).json({ message: "Note Deleted"})
+        return res.status(200).json({ message: "Note Deleted Successfully"})
     } catch (err) {
         console.log(err);
         return res.status(400).json({ message: err.message })
