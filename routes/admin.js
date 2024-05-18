@@ -7,10 +7,12 @@ const { UserDetails } = require('../models/users')
 const mongoose = require('mongoose');
 const isAuthenticated = require('../middlware/auth');
 const isAdmin = require('../middlware/admin');
+const isUserValidate = require('../middlware/user');
 
 
 
-router.post('/permissionToggle', isAuthenticated,isAdmin, async (req, res) => {
+
+router.post('/permissionToggle', isAuthenticated,isAdmin,isUserValidate, async (req, res) => {
     try {
         
         return res.status(200).json({ message: "permission" });

@@ -12,6 +12,7 @@ const jwtExpirySeconds = 300
 const { sendEmail } = require('../utils/sendEmail');
 const nodeMailer = require("nodemailer");
 const isAuthenticated = require('../middlware/auth');
+const isUserValidate = require('../middlware/user');
 
 router.post('/login', async (req, res) => {
     try {
@@ -138,7 +139,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/userdetail', isAuthenticated, async (req, res) => {
+router.post('/userdetail', isAuthenticated,isUserValidate, async (req, res) => {
     try {
         const { conceive, duration_period, last_cycle_regular, last_cycle_irregular_start, last_cycle_irregular_last, last_period_start, period_length_regular, period_length_irregular_start, period_length_irregular_end } = req.body;
         const current_user = req.user["email"]
@@ -285,7 +286,7 @@ router.post('/reset-password/:token', async (req, res) => {
     }
 })
 
-router.post('/personaldetails', isAuthenticated,async (req, res) => {
+router.post('/personaldetails', isAuthenticated,isUserValidate,async (req, res) => {
     try {
         const current_user = req.user["email"];
         const { full_name,dob,phone_number } = req.body;
@@ -304,7 +305,7 @@ router.post('/personaldetails', isAuthenticated,async (req, res) => {
     }
 })
 
-router.post('/delete-account', isAuthenticated, async (req, res) => {
+router.post('/delete-account', isAuthenticated,isUserValidate, async (req, res) => {
     try {
         const email = req.body.email
         const user = await Users.findOne({ email: email })

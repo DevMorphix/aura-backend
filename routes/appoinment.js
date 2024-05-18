@@ -6,10 +6,10 @@ const { UserDetails } = require('../models/users')
 
 const mongoose = require('mongoose');
 const isAuthenticated = require('../middlware/auth');
+const isUserValidate = require('../middlware/user');
 
 
-
-router.post('/request', isAuthenticated, async (req, res) => {
+router.post('/request', isAuthenticated,isUserValidate, async (req, res) => {
     try {
         const { doctor_user="Hello", appointment_time } = req.body;
         const current_user = req.user["email"];
