@@ -4,11 +4,13 @@ const router = express.Router()
 const { Notes } = require('../models/notes')
 const mongoose = require('mongoose');
 const isAuthenticated = require('../middlware/auth');
+const isUserValidate = require('../middlware/user');
+
 const { v4: uuidv4 } = require('uuid');
 
 // Get all Notes as per user filter
 
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', isAuthenticated,isUserValidate, async (req, res) => {
     try {
         const current_user = req.user["email"];
         const note = await Notes.find({user:current_user}).select('-_id -__v')
@@ -21,7 +23,7 @@ router.get('/', isAuthenticated, async (req, res) => {
 });
 
 // Add Notes
-router.post('/add', isAuthenticated, async (req, res) => {
+router.post('/add', isAuthenticated,isUserValidate, async (req, res) => {
     try {
         const user = req.user["email"];
         const content = req.body.content;
@@ -42,7 +44,7 @@ router.post('/add', isAuthenticated, async (req, res) => {
 });
 
 // Get Notes by note_id
-router.get('/:id', isAuthenticated, async (req, res) => {
+router.get('/:id', isAuthenticated,isUserValidate, async (req, res) => {
     try {
         const noteId = req.params.id;
         const note = await Notes.findOne({note_id:noteId}).select('-_id -__v')
@@ -55,7 +57,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
 });
 
 // Update Note by note_id
-router.patch('/:id', isAuthenticated, async (req, res) => {
+router.patch('/:id', isAuthenticated,isUserValidate, async (req, res) => {
     try {
         const user = req.user["email"];
         const content = req.body.content;
@@ -76,7 +78,7 @@ router.patch('/:id', isAuthenticated, async (req, res) => {
 });
 
 // Delete note by note_id
-router.delete('/:id', isAuthenticated, async (req, res) => {
+router.delete('/:id', isAuthenticated,isUserValidate, async (req, res) => {
     try {
         const user = req.user["email"];
         const noteId = req.params.id;
