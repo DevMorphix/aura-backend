@@ -12,6 +12,7 @@ const isUserValidate = require('../middlware/user');
 router.post('/request', isAuthenticated,isUserValidate, async (req, res) => {
     try {
         const { doctor_user, appointment_time } = req.body;
+        console.log(doctor_user);
         const current_user = req.user["email"];
         const user = await UserDetails.findOne({ email: current_user });
         const doctor = await UserDetails.findOne({ email: doctor_user });
