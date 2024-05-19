@@ -14,8 +14,8 @@ const isUserValidate = require('../middlware/user');
 // isAdmin middleware need to add after
 router.post('/permissionToggle', isAuthenticated,isUserValidate, async (req, res) => {
     try {
-        const current_user = req.user["email"]
-        const user_email = req.body.email
+        // const current_user = req.user["email"]
+        const user_email = req.body.user_email
         const user = await UserDetails.findOne({ email:user_email })
         if (user.doctor){
             user.doctor = false
