@@ -38,5 +38,21 @@ router.post('/request', isAuthenticated,isUserValidate, async (req, res) => {
     }
 });
 
+router.get('/get-appoinments',isAuthenticated,isUserValidate,  async (req, res) => {
+    try {
+        const current_user = req.user["email"];
+        const appoinment = await Appoinments.findOne({ user: current_user}).select('-_id -__v')
+        if (appoinment===null){
+            return res.status(200).json({ message: "No Appoinment Booked" });
+        }
+        else {
+            return res.status(403).json({ message: "User appoinment details",appoinment:appoinment });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ message: err.message });
+
+    }
+});
 
 module.exports = router;
