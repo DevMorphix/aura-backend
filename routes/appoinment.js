@@ -20,7 +20,7 @@ router.post('/request', isAuthenticated,isUserValidate, async (req, res) => {
         if (appoinment===null){
             const newAppoinment = new Appoinments({
                 user_name: user.full_name,
-                doctor_name: doctor.full_name, // doctor.full_name
+                doctor_user: doctor.full_name, // doctor.full_name
                 appointment_time: appointment_time,
                 user: current_user,
                 appointment_status: "requested",

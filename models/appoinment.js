@@ -6,7 +6,7 @@ const AppoinmentSchema = new Schema({
         type: String,
         required: true
     },
-    doctor_name: {
+    doctor_user: {
         type: String,
         required: true
     },
