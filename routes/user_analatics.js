@@ -14,6 +14,9 @@ router.post('/period-start', isAuthenticated, isUserValidate, async (req, res) =
     try {
         const current_user = req.user["email"]
         const { start_date } = req.body;
+        if(!start_date){
+            return res.status(400).json({ message: "Start Date have valid" });
+        }
         const newPeriods = new PeriodsDates({
             user: current_user,
             periods_start: start_date,
@@ -48,7 +51,7 @@ router.get('/getdata', isAuthenticated, isUserValidate, async (req, res) => {
         const current_month = date.getMonth();
         const current_year = date.getFullYear()
         const periodsupdated = await PeriodsDates.findOne({user:current_user})
-        const periods = await PeriodsMonthly.find({ user: current_user}).select('-__v -_id')
+        const periods = await PeriodsMonthly.find({ user: current_user}).select('-__v -_id') //, period_month: current_month 
         if (periods.length>0) {
             return res.status(200).json({ period_dates: periods })
         } else {
