@@ -31,5 +31,15 @@ router.post('/permissionToggle', isAuthenticated,isUserValidate, async (req, res
     }
 });
 
+router.get('/all-users',  isAuthenticated,isUserValidate,async (req, res) => {
+    try {
+        const user = await UserDetails.find({}).select('email full_name doctor -_id')
+        return res.status(200).json({ message: "Listing all users" ,all_users:user });
+    } catch (err) {
+        console.log(err);
+
+    }
+});
+
 
 module.exports = router;
