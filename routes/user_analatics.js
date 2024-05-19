@@ -13,6 +13,8 @@ const isUserValidate = require('../middlware/user');
 router.post('/period-start', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const current_user = req.user["email"]
+        const date = new Date
+        const current_month = date.getMonth();
         const { start_date } = req.body;
         if(!start_date){
             return res.status(400).json({ message: "Start Date have valid" });
@@ -20,7 +22,8 @@ router.post('/period-start', isAuthenticated, isUserValidate, async (req, res) =
         const newPeriods = new PeriodsDates({
             user: current_user,
             periods_start: start_date,
-            periods_end: start_date
+            periods_end: start_date,
+            period_month:current_month
         })
         await newPeriods.save()
         return res.status(200).json({ message: "Periods Start date updated" })
@@ -54,8 +57,11 @@ router.get('/getdata', isAuthenticated, isUserValidate, async (req, res) => {
         const current_month = date.getMonth();
         const current_year = date.getFullYear()
         const periodsupdated = await PeriodsDates.findOne({user:current_user})
-        const periods = await PeriodsMonthly.find({ user: current_user}).select('-__v -_id') //, period_month: current_month 
-        if (periods.length>0) {
+        const periods = await PeriodsMonthly.find({ user: current_user,period_month: current_month }).select('-__v -_id')
+        if(periods.length===0){
+            return res.status(404).json({ message:"Data not found" })
+        }
+        else if (periods.length>0) {
             return res.status(200).json({ period_dates: periods })
         } else {
             // Define the two dates
@@ -86,7 +92,7 @@ router.get('/getdata', isAuthenticated, isUserValidate, async (req, res) => {
                 user:current_user
             });
             await newPeriodMonth.save()
-            return res.status(200).json({ message: "Periods End date updated", period_dates:newPeriodMonth  })
+            return res.status(200).json({ message: "Periods End date updated"  }) //, period_dates:newPeriodMonth
         }
     } catch (error) {
         console.log(error);

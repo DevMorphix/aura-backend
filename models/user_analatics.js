@@ -10,6 +10,10 @@ const PeriodsSchema = new Schema({
         type: String,
         required: false,
     },
+    period_month:{
+        type: String,
+        required: false,
+    },
     user:{
         type:String,
         required:true
