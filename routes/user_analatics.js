@@ -48,7 +48,7 @@ router.get('/getdata', isAuthenticated, isUserValidate, async (req, res) => {
         const current_month = date.getMonth();
         const current_year = date.getFullYear()
         const periodsupdated = await PeriodsDates.findOne({user:current_user})
-        const periods = await PeriodsMonthly.find({ user: current_user, period_month: current_month }).select('-__v -_id')
+        const periods = await PeriodsMonthly.find({ user: current_user}).select('-__v -_id')
         if (periods.length>0) {
             return res.status(200).json({ period_dates: periods })
         } else {
