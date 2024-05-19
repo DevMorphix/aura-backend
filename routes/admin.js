@@ -15,7 +15,8 @@ const isUserValidate = require('../middlware/user');
 router.post('/permissionToggle', isAuthenticated,isUserValidate, async (req, res) => {
     try {
         const current_user = req.user["email"]
-        const user = await UserDetails.findOne({ email:current_user })
+        const user_email = req.body.email
+        const user = await UserDetails.findOne({ email:user_email })
         if (user.doctor){
             user.doctor = false
             await user.save()
@@ -35,6 +36,19 @@ router.get('/all-users',  isAuthenticated,isUserValidate,async (req, res) => {
     try {
         const user = await UserDetails.find({}).select('email full_name doctor -_id')
         return res.status(200).json({ message: "Listing all users" ,all_users:user });
+    } catch (err) {
+        console.log(err);
+
+    }
+});
+
+// isAuthenticated,isUserValidate,
+router.get('/graph',  async (req, res) => {
+    try {
+        const user = await UserDetails.find({}).select('-_id -__v')
+        console.log(user[0].dob);
+        // for 
+        return res.status(200).json({ message: "Listing all users"  });
     } catch (err) {
         console.log(err);
 
