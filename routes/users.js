@@ -139,7 +139,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/userdetail', isAuthenticated,isUserValidate, async (req, res) => {
+router.post('/userdetail', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const { conceive, duration_period, last_cycle_regular, last_cycle_irregular_start, last_cycle_irregular_last, last_period_start, period_length_regular, period_length_irregular_start, period_length_irregular_end } = req.body;
         const current_user = req.user["email"]
@@ -286,18 +286,18 @@ router.post('/reset-password/:token', async (req, res) => {
     }
 })
 
-router.post('/personaldetails', isAuthenticated,isUserValidate,async (req, res) => {
+router.post('/personaldetails', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const current_user = req.user["email"];
-        const { full_name,dob,phone_number } = req.body;
-        const userdetails = await UserDetails.findOne({email:current_user})
-        if (userdetails){
+        const { full_name, dob, phone_number } = req.body;
+        const userdetails = await UserDetails.findOne({ email: current_user })
+        if (userdetails) {
             userdetails.full_name = full_name
             userdetails.dob = dob
             userdetails.phone_number = phone_number
             await userdetails.save()
             return res.status(200).json({ message: "Userdetails Updated Successfully" });
-        }else{
+        } else {
             return res.status(404).json({ message: "UserDetails Not Found" });
         }
     } catch (err) {
@@ -305,7 +305,7 @@ router.post('/personaldetails', isAuthenticated,isUserValidate,async (req, res) 
     }
 })
 
-router.post('/delete-account', isAuthenticated,isUserValidate, async (req, res) => {
+router.post('/delete-account', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const email = req.body.email
         const user = await Users.findOne({ email: email })
@@ -320,4 +320,15 @@ router.post('/delete-account', isAuthenticated,isUserValidate, async (req, res) 
         return res.status(400).json({ message: err.message })
     }
 })
+
+// router.post('/add-admin', async (req, res) => {
+//     try {
+//         const user = await UserDetails.findOne({ email: "abhishekvgopal3@gmail.com" })
+//         user.is_admin = true
+//         await user.save()
+//         return res.status(200).json({ message: "Updated to admin" });
+//     } catch (err) {
+//         return res.status(400).json({ message: err.message })
+//     }
+// });
 module.exports = router;
