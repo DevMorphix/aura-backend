@@ -15,18 +15,39 @@ router.post('/period-start', isAuthenticated, isUserValidate, async (req, res) =
         const current_user = req.user["email"]
         const date = new Date
         const current_month = date.getMonth();
+        const periodsupdated = await PeriodsDates.find({ user: current_user, period_month: current_month })
+        console.log(periodsupdated);
+
         const { start_date } = req.body;
-        if(!start_date){
+        // console.log(periodsupdated.period_month);
+        if (!start_date) {
             return res.status(400).json({ message: "Start Date have valid" });
         }
+        // if (periodsupdated != 0) {
+        //     if (periodsupdated.period_month === current_month) {
+        //         return res.status(400).json({ message: "Current Month Periods already started" });
+        //     } else {
+        //         const newPeriods = new PeriodsDates({
+        //             user: current_user,
+        //             periods_start: start_date,
+        //             periods_end: start_date,
+        //             period_month: current_month
+        //         })
+        //         await newPeriods.save()
+        //         return res.status(200).json({ message: "Periods Start date updated" })
+        //     }
+        // }
+        // else {
+        // return res.status(400).json({ message: "Data not found" });
         const newPeriods = new PeriodsDates({
             user: current_user,
             periods_start: start_date,
             periods_end: start_date,
-            period_month:current_month
+            period_month: current_month
         })
         await newPeriods.save()
         return res.status(200).json({ message: "Periods Start date updated" })
+        // }
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: err.message });
@@ -37,7 +58,7 @@ router.post('/period-end', isAuthenticated, isUserValidate, async (req, res) => 
     try {
         const current_user = req.user["email"]
         const { end_date } = req.body;
-        if(!end_date_date){
+        if (!end_date_date) {
             return res.status(400).json({ message: "Start Date have valid" });
         }
         const periods = await PeriodsDates.findOne({ user: current_user })
@@ -56,12 +77,12 @@ router.get('/getdata', isAuthenticated, isUserValidate, async (req, res) => {
         const date = new Date
         const current_month = date.getMonth();
         const current_year = date.getFullYear()
-        const periodsupdated = await PeriodsDates.findOne({user:current_user})
-        const periods = await PeriodsMonthly.find({ user: current_user,period_month: current_month }).select('-__v -_id')
-        if(periods.length===0){
-            return res.status(404).json({ message:"Data not found" })
+        const periodsupdated = await PeriodsDates.findOne({ user: current_user })
+        const periods = await PeriodsMonthly.find({ user: current_user, period_month: current_month }).select('-__v -_id')
+        if (periods.length === 0) {
+            return res.status(404).json({ message: "Data not found" });
         }
-        else if (periods.length>0) {
+        else if (periods.length > 0) {
             return res.status(200).json({ period_dates: periods })
         } else {
             // Define the two dates
@@ -71,8 +92,8 @@ router.get('/getdata', isAuthenticated, isUserValidate, async (req, res) => {
             }
             const date1formated = formatDate(periodsupdated.periods_end);
             const date2formated = formatDate(periodsupdated.periods_start);
-            const date1 =  new Date(date1formated); // May 15, 2023
-            const date2 =  new Date(date2formated); // April 20, 2023
+            const date1 = new Date(date1formated); // May 15, 2023
+            const date2 = new Date(date2formated); // April 20, 2023
 
             // Calculate the difference in milliseconds
             const diffInMs = date1.getTime() - date2.getTime();
@@ -86,13 +107,13 @@ router.get('/getdata', isAuthenticated, isUserValidate, async (req, res) => {
             });
             // console.log("Array of dates:", datesArray);
             const newPeriodMonth = new PeriodsMonthly({
-                period_dates:String(datesArray),
-                period_month:current_month,
-                period_year:current_year,
-                user:current_user
+                period_dates: String(datesArray),
+                period_month: current_month,
+                period_year: current_year,
+                user: current_user
             });
             await newPeriodMonth.save()
-            return res.status(200).json({ message: "Periods End date updated"  }) //, period_dates:newPeriodMonth
+            return res.status(200).json({ message: "Periods End date updated" }) //, period_dates:newPeriodMonth
         }
     } catch (error) {
         console.log(error);
