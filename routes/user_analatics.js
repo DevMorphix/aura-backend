@@ -58,7 +58,7 @@ router.post('/period-end', isAuthenticated, isUserValidate, async (req, res) => 
     try {
         const current_user = req.user["email"]
         const { end_date } = req.body;
-        if (!end_date_date) {
+        if (!end_date) {
             return res.status(400).json({ message: "Start Date have valid" });
         }
         const periods = await PeriodsDates.findOne({ user: current_user })
