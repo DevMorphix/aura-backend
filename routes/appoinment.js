@@ -7,6 +7,8 @@ const { UserDetails } = require('../models/users')
 const mongoose = require('mongoose');
 const isAuthenticated = require('../middlware/auth');
 const isUserValidate = require('../middlware/user');
+const isDoctor = require('../middlware/doctor');
+
 
 
 router.post('/request', isAuthenticated, isUserValidate, async (req, res) => {
@@ -41,7 +43,7 @@ router.post('/request', isAuthenticated, isUserValidate, async (req, res) => {
 router.get('/get-appoinments-users', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const current_user = req.user["email"];
-        const appoinment = await Appoinments.find({ user: current_user, appointment_status: { $ne: 'rejected' } }).select('-_id -__v')
+        const appoinment = await Appoinments.find({ user: current_user, appointment_status: { $ne: 'rejected' } }).select('-_id -__v -created_at -updated_at')
         if (appoinment === null) {
             return res.status(200).json({ message: "No Appoinment Booked" });
         }
@@ -55,4 +57,20 @@ router.get('/get-appoinments-users', isAuthenticated, isUserValidate, async (req
     }
 });
 
+router.get('/get-appoinments-doctor', isAuthenticated, isUserValidate, isDoctor,async (req, res) => {
+    try {
+        const current_user = req.user["email"];
+        const appoinment = await Appoinments.find({ doctor_user: current_user, appointment_status: { $ne: 'rejected' } }).select('-_id -__v -created_at -updated_at -doctor_name')
+        if (appoinment === null) {
+            return res.status(200).json({ message: "No Appoinment Booked" });
+        }
+        else {
+            return res.status(200).json({ message: "User appoinment details", appoinment: appoinment });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ message: err.message });
+
+    }
+});
 module.exports = router;
