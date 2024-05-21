@@ -63,6 +63,30 @@ router.post('/accept', isAuthenticated, isUserValidate, isDoctor, async (req, re
     }
 });
 
+router.post('/reject', isAuthenticated, isUserValidate, isDoctor, async (req, res) => {
+    try {
+        const { appointment_id, reject_reason } = req.body;
+        const current_user = req.user["email"];
+        const appoinment = await Appoinments.findOne({ appointment_id: appointment_id, doctor_email: current_user });
+        if (!reject_reason) {
+            return res.status(404).json({ message: "Reject Reason Not Provided" });
+        }
+        if (appoinment === null) {
+            return res.status(404).json({ message: "Appoinment Not Found" });
+        }
+        else {
+            appoinment.appointment_status = "rejected"
+            appoinment.reject_reason = reject_reason
+            await appoinment.save()
+            return res.status(200).json({ message: "Appoinment Rejected" });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ message: err.message });
+
+    }
+});
+
 router.get('/get-appoinments-users', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const current_user = req.user["email"];
