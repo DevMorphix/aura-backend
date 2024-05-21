@@ -9,15 +9,15 @@ const isAuthenticated = require('../middlware/auth');
 const isUserValidate = require('../middlware/user');
 
 
-router.post('/request', isAuthenticated,isUserValidate, async (req, res) => {
+router.post('/request', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const { doctor_user, appointment_time } = req.body;
         console.log(doctor_user);
         const current_user = req.user["email"];
         const user = await UserDetails.findOne({ email: current_user });
         const doctor = await UserDetails.findOne({ email: doctor_user });
-        const appoinment = await Appoinments.findOne({ user: current_user});
-        if (appoinment===null){
+        const appoinment = await Appoinments.findOne({ user: current_user });
+        if (appoinment === null) {
             const newAppoinment = new Appoinments({
                 user_name: user.full_name,
                 doctor_user: doctor.full_name, // doctor.full_name
@@ -38,15 +38,15 @@ router.post('/request', isAuthenticated,isUserValidate, async (req, res) => {
     }
 });
 
-router.get('/get-appoinments',isAuthenticated,isUserValidate,  async (req, res) => {
+router.get('/get-appoinments-users', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const current_user = req.user["email"];
-        const appoinment = await Appoinments.findOne({ user: current_user}).select('-_id -__v')
-        if (appoinment===null){
+        const appoinment = await Appoinments.find({ user: current_user, appointment_status: { $ne: 'rejected' } }).select('-_id -__v')
+        if (appoinment === null) {
             return res.status(200).json({ message: "No Appoinment Booked" });
         }
         else {
-            return res.status(403).json({ message: "User appoinment details",appoinment:appoinment });
+            return res.status(200).json({ message: "User appoinment details", appoinment: appoinment });
         }
     } catch (err) {
         console.log(err);
