@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const AppoinmentSchema = new Schema({
+    appointment_id:{
+        type:String,
+        required:true
+    },
     user_name: {
         type: String,
         required: true

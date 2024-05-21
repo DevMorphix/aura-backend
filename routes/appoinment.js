@@ -1,6 +1,8 @@
 require('dotenv').config()
 const express = require('express')
 const router = express.Router()
+const { v4: uuidv4 } = require('uuid');
+
 const { Appoinments } = require('../models/appoinment')
 const { UserDetails } = require('../models/users')
 
@@ -21,6 +23,7 @@ router.post('/request', isAuthenticated, isUserValidate, async (req, res) => {
         const appoinment = await Appoinments.findOne({ user: current_user });
         if (appoinment === null) {
             const newAppoinment = new Appoinments({
+                appointment_id: uuidv4(),
                 user_name: user.full_name,
                 doctor_user: doctor.full_name, // doctor.full_name
                 appointment_time: appointment_time,
@@ -32,6 +35,26 @@ router.post('/request', isAuthenticated, isUserValidate, async (req, res) => {
         }
         else {
             return res.status(403).json({ message: "User already booked a appoinment" });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ message: err.message });
+
+    }
+});
+
+router.post('/accept', isAuthenticated, isUserValidate, isDoctor, async (req, res) => {
+    try {
+        const { appointment_id } = req.body;
+        const current_user = req.user["email"];
+        const appoinment = await Appoinments.findOne({ appointment_id: appointment_id, doctor_email: current_user });
+        if (appoinment === null) {
+            return res.status(404).json({ message: "Appoinment Not Found" });
+        }
+        else {
+            appoinment.appointment_status = "accepted"
+            await appoinment.save()
+            return res.status(200).json({ message: "Appoinment Accepted" });
         }
     } catch (err) {
         console.log(err);
@@ -57,7 +80,7 @@ router.get('/get-appoinments-users', isAuthenticated, isUserValidate, async (req
     }
 });
 
-router.get('/get-appoinments-doctor', isAuthenticated, isUserValidate, isDoctor,async (req, res) => {
+router.get('/get-appoinments-doctor', isAuthenticated, isUserValidate, isDoctor, async (req, res) => {
     try {
         const current_user = req.user["email"];
         const appoinment = await Appoinments.find({ doctor_user: current_user, appointment_status: { $ne: 'rejected' } }).select('-_id -__v -created_at -updated_at -doctor_name')
