@@ -50,7 +50,7 @@ router.get('/graph', isAuthenticated, isUserValidate, isAdmin, async (req, res) 
         const year_with_count = []
         for (let step = 0; step < user.length; step++) {
             const slicedData = user[step].dob.slice(0, 4);
-            age_year.add(slicedData, "count");
+            age_year.add(slicedData);
         }
         age_year.forEach(async (year) => {
             const user = await UserDetails.find({ dob_year: year }).select('-_id -__v')
