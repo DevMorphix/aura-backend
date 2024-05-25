@@ -50,6 +50,10 @@ const UserDetailSchema = new Schema({
         type: String,
         required:false
     },
+    dob_year:{
+        type: String,
+        required:false
+    },
     phone_number:{
         type: String,
         required:false

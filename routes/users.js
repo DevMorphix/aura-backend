@@ -295,6 +295,7 @@ router.post('/personaldetails', isAuthenticated, isUserValidate, async (req, res
             userdetails.full_name = full_name
             userdetails.dob = dob
             userdetails.phone_number = phone_number
+            userdetails.dob_year = dob.slice(0,4)
             await userdetails.save()
             return res.status(200).json({ message: "Userdetails Updated Successfully" });
         } else {
