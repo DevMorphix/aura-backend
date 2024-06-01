@@ -122,7 +122,7 @@ router.get('/get-appoinments-doctor', isAuthenticated, isUserValidate, isDoctor,
     }
 });
 
-router.post('/appoinment-cancel', isAuthenticated, isUserValidate, async (req, res) => {
+router.post('/cancel', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const { appointment_id } = req.body
         const current_user = req.user["email"];
