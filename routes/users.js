@@ -324,7 +324,7 @@ router.post('/delete-account', isAuthenticated, isUserValidate, async (req, res)
 
 // router.post('/add-admin', async (req, res) => {
 //     try {
-//         const user = await UserDetails.findOne({ email: "abhishekvgopal3@gmail.com" })
+//         const user = await UserDetails.findOne({ email: "" })
 //         user.is_admin = true
 //         await user.save()
 //         return res.status(200).json({ message: "Updated to admin" });
