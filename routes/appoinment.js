@@ -121,4 +121,23 @@ router.get('/get-appoinments-doctor', isAuthenticated, isUserValidate, isDoctor,
 
     }
 });
+
+router.post('/appoinment-cancel', isAuthenticated, isUserValidate, async (req, res) => {
+    try {
+        const { appointment_id } = req.body
+        const current_user = req.user["email"];
+        const appoinment = await Appoinments.deleteOne({ user: current_user, appointment_id: appointment_id }).select('-_id -__v -created_at -updated_at')
+        if (appoinment.deletedCount === 1) {
+            // Deletion successful, you can handle the response accordingly
+            res.status(200).send({ message: "Appointment deleted successfully" });
+        } else {
+            // Deletion was not successful, handle the error
+            res.status(404).send({ message: "Appointment not found" });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ message: err.message });
+
+    }
+});
 module.exports = router;
