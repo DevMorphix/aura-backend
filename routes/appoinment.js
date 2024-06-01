@@ -28,8 +28,8 @@ router.post('/request', isAuthenticated, isUserValidate, async (req, res) => {
                 appointment_time: appointment_time,
                 user: current_user,
                 doctor_email: doctor_email,
-                doctor_name:doctor_name,
-                    appointment_status: "requested",
+                doctor_name: doctor_name,
+                appointment_status: "requested",
             });
             await newAppoinment.save()
             return res.status(200).json({ message: "Appoinment Booked" });
