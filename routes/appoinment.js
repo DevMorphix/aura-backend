@@ -108,7 +108,8 @@ router.get('/get-appoinments-users', isAuthenticated, isUserValidate, async (req
 router.get('/get-appoinments-doctor', isAuthenticated, isUserValidate, isDoctor, async (req, res) => {
     try {
         const current_user = req.user["email"];
-        const appoinment = await Appoinments.find({ doctor_user: current_user, appointment_status: { $ne: 'rejected' } }).select('-_id -__v -created_at -updated_at -doctor_name')
+        console.log(current_user);
+        const appoinment = await Appoinments.find({ doctor_email: current_user, appointment_status: { $ne: 'rejected' } }).select('-_id -__v -created_at -updated_at -doctor_name')
         if (appoinment === null) {
             return res.status(200).json({ message: "No Appoinment Booked" });
         }
