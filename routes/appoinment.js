@@ -92,11 +92,13 @@ router.get('/get-appoinments-users', isAuthenticated, isUserValidate, async (req
     try {
         const current_user = req.user["email"];
         const appoinment = await Appoinments.find({ user: current_user, appointment_status: { $ne: 'rejected' } }).select('-_id -__v -created_at -updated_at')
+        const doctor_phone_number = await UserDetails.find({ email: appoinment[0].doctor_email })
+        
         if (appoinment === null) {
             return res.status(200).json({ message: "No Appoinment Booked" });
         }
         else {
-            return res.status(200).json({ message: "User appoinment details", appoinment: appoinment });
+            return res.status(200).json({ message: "User appoinment details", appoinment: appoinment, doctor_phone_number: doctor_phone_number[0].phone_number });
         }
     } catch (err) {
         console.log(err);
