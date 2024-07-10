@@ -13,6 +13,8 @@ const { sendEmail } = require('../utils/sendEmail');
 const nodeMailer = require("nodemailer");
 const isAuthenticated = require('../middlware/auth');
 const isUserValidate = require('../middlware/user');
+const { Appoinments } = require('../models/appoinment');
+const { PeriodsDates, PeriodsMonthly } = require('../models/user_analatics');
 
 router.post('/login', async (req, res) => {
     try {
@@ -295,7 +297,7 @@ router.post('/personaldetails', isAuthenticated, isUserValidate, async (req, res
             userdetails.full_name = full_name
             userdetails.dob = dob
             userdetails.phone_number = phone_number
-            userdetails.dob_year = dob.slice(0,4)
+            userdetails.dob_year = dob.slice(0, 4)
             await userdetails.save()
             return res.status(200).json({ message: "Userdetails Updated Successfully" });
         } else {
@@ -313,8 +315,14 @@ router.post('/delete-account', isAuthenticated, isUserValidate, async (req, res)
         if (!user) {
             return res.status(400).json({ message: "Incorrect email or Email id not found" })
         } else {
-            await UserDetails.deleteOne({ email: email });
-            await Users.deleteOne({ email: email });
+            await UserDetails.deleteMany({ email: email });
+            await Users.deleteMany({ email: email });
+            await Notes.deleteMany({ email: email });
+            await Appoinments.deleteMany({ email: email });
+            await PeriodsDates.deleteMany({ email: email });
+            await PeriodsMonthly.deleteMany({ email: email });
+            await UserOtp.deleteMany({ email: email });
+            await ResetPassword.deleteMany({ email: email });
             return res.status(200).json({ message: "User Deleted Successfully" });
         }
     } catch (err) {
