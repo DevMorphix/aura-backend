@@ -317,12 +317,12 @@ router.post('/delete-account', isAuthenticated, isUserValidate, async (req, res)
         } else {
             await UserDetails.deleteMany({ email: email });
             await Users.deleteMany({ email: email });
-            await Notes.deleteMany({ email: email });
-            await Appoinments.deleteMany({ email: email });
-            await PeriodsDates.deleteMany({ email: email });
-            await PeriodsMonthly.deleteMany({ email: email });
-            await UserOtp.deleteMany({ email: email });
-            await ResetPassword.deleteMany({ email: email });
+            await Notes.deleteMany({ user: email });
+            await Appoinments.deleteMany({ user: email });
+            await PeriodsDates.deleteMany({ user: email });
+            await PeriodsMonthly.deleteMany({ user: email });
+            await UserOtp.deleteMany({ user : email });
+            await ResetPassword.deleteMany({ user : email });
             return res.status(200).json({ message: "User Deleted Successfully" });
         }
     } catch (err) {
