@@ -10,11 +10,11 @@ const { v4: uuidv4 } = require('uuid');
 
 // Get all Notes as per user filter
 
-router.get('/', isAuthenticated,isUserValidate, async (req, res) => {
+router.get('/', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const current_user = req.user["email"];
-        const note = await Notes.find({user:current_user}).select('-_id -__v')
-        return res.status(200).json({ Note: note})
+        const note = await Notes.find({ user: current_user }).select('-_id -__v')
+        return res.status(200).json({ Note: note })
     } catch (err) {
         console.log(err);
         return res.status(400).json({ message: err.message })
@@ -23,16 +23,16 @@ router.get('/', isAuthenticated,isUserValidate, async (req, res) => {
 });
 
 // Add Notes
-router.post('/add', isAuthenticated,isUserValidate, async (req, res) => {
+router.post('/add', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const user = req.user["email"];
         const content = req.body.content;
         const title = req.body.title;
         const newNotes = new Notes({
-            note_id:uuidv4(),
-            user:user,
-            content:content,
-            title:title
+            note_id: uuidv4(),
+            user: user,
+            content: content,
+            title: title
         });
         await newNotes.save()
         return res.status(200).json({ message: "Notes updated" })
@@ -44,11 +44,11 @@ router.post('/add', isAuthenticated,isUserValidate, async (req, res) => {
 });
 
 // Get Notes by note_id
-router.get('/:id', isAuthenticated,isUserValidate, async (req, res) => {
+router.get('/:id', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const noteId = req.params.id;
-        const note = await Notes.findOne({note_id:noteId}).select('-_id -__v')
-        return res.status(200).json({ Note: note})
+        const note = await Notes.findOne({ note_id: noteId }).select('-_id -__v')
+        return res.status(200).json({ Note: note })
     } catch (err) {
         console.log(err);
         return res.status(400).json({ message: err.message })
@@ -57,19 +57,19 @@ router.get('/:id', isAuthenticated,isUserValidate, async (req, res) => {
 });
 
 // Update Note by note_id
-router.patch('/:id', isAuthenticated,isUserValidate, async (req, res) => {
+router.patch('/:id', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const user = req.user["email"];
         const content = req.body.content;
         const title = req.body.title;
         const noteId = req.params.id;
 
-        const note = await Notes.findOne({note_id:noteId})
+        const note = await Notes.findOne({ note_id: noteId })
         note.content = content
         note.title = title
         note.updated_at = Date.now()
         await note.save()
-        return res.status(200).json({ message: "Note Updated"})
+        return res.status(200).json({ message: "Note Updated" })
     } catch (err) {
         console.log(err);
         return res.status(400).json({ message: err.message })
@@ -78,16 +78,16 @@ router.patch('/:id', isAuthenticated,isUserValidate, async (req, res) => {
 });
 
 // Delete note by note_id
-router.delete('/:id', isAuthenticated,isUserValidate, async (req, res) => {
+router.delete('/:id', isAuthenticated, isUserValidate, async (req, res) => {
     try {
         const user = req.user["email"];
         const noteId = req.params.id;
-        const note = await Notes.findOne({note_id:noteId})
+        const note = await Notes.findOne({ note_id: noteId })
         if (!note) {
-            return res.status(404).json({ message: 'Note not found or Note already deleted'});
+            return res.status(404).json({ message: 'Note not found or Note already deleted' });
         }
         await Notes.deleteOne({ note_id: noteId, user });
-        return res.status(200).json({ message: "Note Deleted Successfully"})
+        return res.status(200).json({ message: "Note Deleted Successfully" })
     } catch (err) {
         console.log(err);
         return res.status(400).json({ message: err.message })
