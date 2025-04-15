@@ -134,7 +134,7 @@ router.post('/register', async (req, res) => {
                 await transporter.sendMail(mailOptions);
             }
             mailSend();
-            return res.status(201).json({ message: "User Created Successfully  & Email send" })
+            return res.status(201).json({ message: "User Created Successfully  & Email send", randomNumber: randomNumber });
         } catch (err) {
             return res.status(400).json({ message: err.message })
         }
@@ -198,7 +198,7 @@ router.post('/otpresend', async (req, res) => {
                 await transporter.sendMail(mailOptions);
             }
             mailSend();
-            return res.status(200).json({ message: "Otp Resented" });
+            return res.status(200).json({ message: "Otp Resented" , otp: otpVerify.otp });
         }
         else {
             return res.status(404).json({ message: "Otp not found" })

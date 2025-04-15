@@ -1,66 +1,78 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const PeriodsSchema = new Schema({
-    periods_start:{
+// For storing detailed period data
+const PeriodsDatesSchema = new mongoose.Schema(
+  {
+    user: {
+      type: String,
+      required: true,
+    },
+    periods_start: {
+      type: String,
+      required: true,
+    },
+    periods_end: {
+      type: String,
+      default: null,
+    },
+    period_month: {
+      type: Number,
+      required: true,
+    },
+    period_year: {
+      type: Number,
+      required: true,
+    },
+    // Add fields for tracking moods and flow levels
+    moods: [{
+      date: {
         type: String,
-        required: false,
-    },
-    periods_end:{
+        required: true
+      },
+      note: {
         type: String,
-        required: false,
-    },
-    period_month:{
+        required: true
+      }
+    }],
+    bleeding_levels: [{
+      date: {
         type: String,
-        required: false,
-    },
-    user:{
-        type:String,
-        required:true
-    },
-    created_at: {
-        type: Date,
-        required: false,
-        default: Date.now
-    },
-    updated_at: {
-        type: Date,
-        required: false,
-        default: Date.now
-    }
-})
+        required: true
+      },
+      level: {
+        type: String,
+        enum: ['heavy', 'medium', 'low'],
+        required: true
+      }
+    }]
+  },
+  { timestamps: true }
+);
 
-const PeriodsMonthlySchema = new Schema({
-    period_dates:{
-        type: Array,
-        required: false,
+// For calendar view
+const PeriodsMonthlySchema = new mongoose.Schema(
+  {
+    period_dates: {
+      type: String, 
+      required: true,
     },
-    period_month:{
-        type: String,
-        required: false,
+    period_month: {
+      type: String,
+      required: true,
     },
-    period_year:{
-        type: String,
-        required: false,
+    period_year: {
+      type: String,
+      required: true,
     },
-    user:{
-        type:String,
-        required:true
+    user: {
+      type: String,
+      required: true,
     },
-    created_at: {
-        type: Date,
-        required: false,
-        default: Date.now
-    },
-    updated_at: {
-        type: Date,
-        required: false,
-        default: Date.now
-    }
-})
+  },
+  { timestamps: true }
+);
 
-const PeriodsDates = mongoose.model('PeriodsDates',PeriodsSchema);
-const PeriodsMonthly = mongoose.model('PeriodsMonthly',PeriodsMonthlySchema);
+const PeriodsDates = mongoose.model("periodesDates", PeriodsDatesSchema);
+const PeriodsMonthly = mongoose.model("periodmonthly", PeriodsMonthlySchema);
 
-
-module.exports = { PeriodsDates,PeriodsMonthly };
+module.exports = { PeriodsDates, PeriodsMonthly };

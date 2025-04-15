@@ -76,7 +76,11 @@ const UserDetailSchema = new Schema({
         type:Date,
         default:Date.now 
     },
-})
+    cycle_data: {
+        type: String,
+        default: null
+    }
+}, { timestamps: true })
 
 const UserOtpSchema = new Schema({
     otp:{
